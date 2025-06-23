@@ -1,0 +1,854 @@
+/* --- General Styling --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 30px;
+}
+
+.section-heading {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1a237e;
+    margin-bottom: 40px;
+}
+
+/* --- Navigation Bar --- */
+nav {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #6a11cb;
+}
+.nav-links a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.nav-links a:hover {
+    color: #2575fc;
+}
+.nav-links a.active { /* Style for active navigation link */
+    color: #6a1b9a;
+    font-weight: 600;
+}
+
+/* --- Hero Section (Summarizer/Plagiarism Tool) --- */
+#hero {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+/* --- Text Area and Controls Styling --- */
+.summarizer-grid {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+.text-area-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+textarea {
+    width: 100%;
+    height: 300px;
+    border: 2px solid #dfe6e9;
+    border-radius: 12px;
+    padding: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s, box-shadow 0.3s, height 0.3s ease; /* Added height transition */
+}
+textarea:focus {
+    outline: none;
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 4px rgba(106, 17, 203, 0.1);
+}
+#outputText {
+    background-color: #f8f9fa;
+}
+.counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 8px;
+    height: 20px;
+}
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+}
+
+/* Combined and Harmonized Button Styling */
+#summarizeBtn,
+#rewriteBtn,
+#checkPlagiarismBtn,
+#paraphraseBtn, /* Added for paraphraser */
+#humanizeBtn, /* Added for humanizer */
+#generateIdeasBtn, /* Added for content idea generator */
+#generateEmailBtn, /* Added for email generator */
+.generate-btn /* Added for slogan generator */
+{
+    padding: 15px 40px;
+    font-size: 1.1rem; /* Base font size */
+    font-weight: 500; /* Base font weight */
+    color: #fff;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* For standalone buttons outside .controls: */
+    /* display: block; */
+    /* margin: 30px auto; */
+}
+
+/* Specific adjustments for all tool buttons */
+#summarizeBtn,
+#rewriteBtn,
+#checkPlagiarismBtn,
+#paraphraseBtn,
+#humanizeBtn,
+#generateIdeasBtn,
+#generateEmailBtn,
+.generate-btn {
+    margin: 0; /* Override default margin if it's within .controls */
+    display: inline-block; /* Ensure it behaves like other buttons in .controls */
+}
+#summarizeBtn:hover,
+#rewriteBtn:hover,
+#checkPlagiarismBtn:hover,
+#paraphraseBtn:hover,
+#humanizeBtn:hover,
+#generateIdeasBtn:hover,
+#generateEmailBtn:hover,
+.generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+#summarizeBtn.loading,
+#rewriteBtn.loading,
+#checkPlagiarismBtn.loading,
+#paraphraseBtn.loading,
+#humanizeBtn.loading,
+#generateIdeasBtn.loading,
+#generateEmailBtn.loading,
+.generate-btn.loading {
+    cursor: not-allowed;
+    background: #bdc3c7; /* Grey background when loading */
+    box-shadow: none;
+    transform: none;
+}
+
+/* Specific adjustments for rewriteBtn (if different from others) */
+#rewriteBtn {
+    font-size: 1.15rem; /* Slightly larger font for rewrite */
+    font-weight: 600; /* Bolder text for rewrite */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Slightly more prominent shadow initially */
+}
+#rewriteBtn:hover {
+    transform: translateY(-3px); /* Lift button slightly more on hover */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Larger, more pronounced shadow on hover */
+    background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%); /* Reverse or change gradient on hover */
+}
+#rewriteBtn:active {
+    transform: translateY(0); /* Press down effect */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Smaller shadow on click */
+}
+
+
+.slider-container { display: flex; align-items: center; gap: 15px; }
+.slider-container label { font-weight: 500; }
+input[type="range"] { width: 150px; }
+
+/* --- AI Detection Result Bar (Textual) --- */
+.ai-detection-result {
+    padding: 15px 20px;
+    margin-top: 20px; /* Space above this bar */
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    color: #333;
+    background-color: #f0f0f0; /* Default background */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Plagiarism Overall Result (Graphical) --- */
+.result-charts {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.result-charts h3 {
+    font-size: 1.8rem;
+    color: #1a237e;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px; /* Space between the two pie charts */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.pie-chart {
+    width: 180px; /* Size of the circular chart */
+    height: 180px;
+    border-radius: 50%;
+    background: #ddd; /* Default grey background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: background 0.5s ease-out; /* Smooth transition for background changes */
+    overflow: hidden; /* Important for conic-gradient masking */
+}
+
+/* Inner white circle to create the "donut" effect */
+.pie-chart::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px; /* Inner circle size */
+    height: 120px;
+    border-radius: 50%;
+    background-color: #ffffff; /* White background for the inner circle */
+    z-index: 1; /* Ensure it's above the conic-gradient */
+}
+
+.chart-label {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a237e; /* Main percentage color */
+    z-index: 2; /* Ensure label is above the inner white circle */
+}
+
+.chart-text {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 5px;
+    z-index: 2; /* Ensure text is above the inner white circle */
+}
+
+
+/* --- Features Section --- */
+.features-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.feature-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    text-align: center;
+    flex-basis: 300px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+.feature-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #1a237e;
+}
+.feature-icon {
+    font-size: 3rem;
+    color: #6a11cb;
+    margin-bottom: 15px;
+}
+
+/* --- How It Works Section --- */
+#how-it-works {
+    background-color: #ffffff;
+}
+.steps-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+.step {
+    text-align: center;
+    flex-basis: 250px;
+}
+.step .step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.step h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+/* --- More Tools Section (used on index.html) --- */
+#more-tools {
+    background-color: #f4f7f9;
+}
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+.tool-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.tool-card i { /* Targeting the icon directly */
+    font-size: 2.5rem;
+    color: #2575fc;
+    margin-bottom: 10px;
+}
+.tool-card h3 {
+    font-size: 1.1rem;
+    color: #1a237e;
+    margin-bottom: 5px;
+}
+.tool-card p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
+/* --- FAQ Section --- */
+.faq-item {
+    background: #fff;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.faq-question {
+    padding: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #1a237e; /* Consistent heading color */
+}
+.faq-question i { /* Font Awesome icon for plus/minus */
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+    color: #6a1b9a; /* Icon color */
+}
+.faq-item.active .faq-question i {
+    transform: rotate(45deg); /* Rotates the plus to a cross (minus) */
+}
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background-color: #f9f9f9; /* Light background for answer */
+    border-top: 1px solid #eee;
+}
+.faq-item.active .faq-answer {
+    max-height: 200px; /* Adjust as needed */
+    padding: 0 20px 20px 20px;
+}
+.faq-answer p {
+    margin-bottom: 10px; /* Spacing for paragraphs within answer */
+    line-height: 1.6;
+    color: #555;
+}
+
+/* --- New Comprehensive Footer Styling --- */
+.main-footer {
+    background-color: #1a237e; /* Dark blue background */
+    color: #f0f0f0; /* Light text color */
+    padding-top: 60px; /* More padding at the top */
+    margin-top: 60px; /* Space from the content above */
+    font-size: 0.95rem;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow columns to wrap on smaller screens */
+    justify-content: space-between;
+    gap: 40px; /* Space between columns */
+    padding-bottom: 40px; /* Padding above the bottom copyright section */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
+}
+
+.footer-column {
+    flex: 1; /* Allow columns to grow and shrink */
+    min-width: 200px; /* Minimum width before wrapping */
+    padding: 10px;
+}
+
+.footer-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff; /* White color for logo */
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.footer-logo .logo-icon {
+    width: 40px; /* Size for your logo icon */
+    height: 40px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.brand-info p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.contact-info a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.contact-info p { /* For non-link contact info in footer */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    margin-bottom: 10px; /* Add spacing between contact lines */
+}
+
+.contact-info a:hover {
+    color: #2575fc; /* Hover color for email */
+}
+
+.footer-column h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 20px;
+    position: relative; /* For underline effect */
+}
+
+/* Subtle underline effect for headings */
+.footer-column h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px; /* Position below text */
+    width: 50px; /* Length of the underline */
+    height: 3px;
+    background-color: #2575fc; /* Accent color */
+    border-radius: 2px;
+}
+
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-column ul li a:hover {
+    color: #2575fc;
+}
+
+.language-selector select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%20197.8L159.2%2069.9c-2.8-2.8-7.3-2.8-10.1%200L5.4%20197.8c-2.8%202.8-2.8%207.3%200%2010.1s7.3%202.8%2010.1%200l144.5-144.5%20144.5%20144.5c2.8%202.8%207.3%202.8%2010.1%200S289.8%20200.6%20287%20197.8z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow for select */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+.language-selector select option {
+    background-color: #1a237e; /* Dark background for options */
+    color: #fff;
+}
+
+.footer-bottom {
+    background-color: #111a4b; /* Slightly darker shade for the bottom bar */
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Lighter separator */
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: #fff;
+    font-size: 1.2rem;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    background-color: #2575fc; /* Hover color for social icons */
+    transform: translateY(-3px);
+}
+
+/* --- Generic Tool Container Styling (used by various tool pages) --- */
+.tool-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Default gap, can be overridden */
+    margin-top: 40px;
+    background-color: #ffffff; /* White background for the tool area */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+.input-group, .output-group, .text-area-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    flex: 1; /* Allows them to take equal space in a row layout */
+}
+.input-group label, .output-group label, .text-area-group label {
+    font-weight: 600;
+    color: #1a237e;
+}
+.input-group input[type="text"],
+.input-group textarea,
+.output-group textarea,
+.text-area-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    transition: border-color 0.3s ease;
+}
+.input-group input[type="text"]:focus,
+.input-group textarea:focus,
+.output-group textarea:focus,
+.text-area-group textarea:focus {
+    outline: none;
+    border-color: #6a1b9a;
+    box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2);
+}
+/* Adjust textarea min-height for tools where needed */
+.input-group textarea, .text-area-group textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+.output-group textarea {
+    min-height: 250px; /* Slightly taller for output areas */
+    background-color: #f9f9f9;
+    cursor: default;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+.action-buttons button {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    background-color: #6a1b9a;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+
+.action-buttons button:hover {
+    background-color: #4a148c;
+    transform: translateY(-2px);
+}
+
+.action-buttons button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #6a1b9a;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-top: 10px;
+    display: none; /* Hidden by default */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: none; /* Hidden by default */
+    text-align: center;
+}
+
+/* Specific styles for Slogan Generator */
+.slogan-list {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 100px;
+    max-height: 400px; /* Limit height and add scroll */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none; /* Remove default list styling */
+    text-align: left; /* Align list items to left */
+}
+
+.slogan-list li {
+    padding: 10px 15px;
+    background-color: #e8eaf6; /* Light purple */
+    border-radius: 5px;
+    font-size: 1.1rem;
+    color: #3f51b5; /* Darker blue for text */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    text-align: center; /* Center each slogan text */
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .summarizer-grid {
+        flex-direction: column; /* Stack text areas vertically */
+        gap: 20px;
+    }
+
+    .section-container {
+        padding: 30px 20px; /* Adjust padding for smaller screens */
+    }
+
+    .section-heading {
+        font-size: 2rem; /* Smaller heading size */
+        margin-bottom: 30px;
+    }
+
+    .nav-links {
+        display: none; /* Hide nav links on small screens if you want a hamburger menu */
+        /* Or style them to stack/collapse */
+    }
+    .nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .nav-logo {
+        margin-bottom: 10px;
+    }
+    .nav-links {
+        width: 100%;
+        text-align: center;
+    }
+    .nav-links a {
+        margin: 5px 10px;
+        display: block;
+    }
+
+
+    /* Footer Responsive Adjustments */
+    .footer-container {
+        flex-direction: column; /* Stack columns vertically */
+        align-items: center; /* Center items when stacked */
+        text-align: center;
+    }
+
+    .footer-column {
+        min-width: 100%; /* Full width when stacked */
+        padding: 10px 0; /* Adjust padding */
+    }
+
+    .footer-column h4::after {
+        left: 50%; /* Center the underline */
+        transform: translateX(-50%);
+    }
+
+    .contact-info {
+        justify-content: center; /* Center email on small screens */
+    }
+
+    .language-selector select {
+        width: 80%; /* Make select narrower if needed */
+        margin: 0 auto; /* Center select */
+    }
+
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .chart-container {
+        flex-direction: column; /* Stack charts vertically on small screens */
+        gap: 30px;
+    }
+
+    .pie-chart {
+        width: 150px; /* Slightly smaller charts on small screens */
+        height: 150px;
+    }
+
+    .pie-chart::after {
+        width: 100px; /* Adjust inner circle size */
+        height: 100px;
+    }
+
+    .chart-label {
+        font-size: 2rem; /* Adjust font size for charts */
+    }
+
+    /* Tool-specific responsive adjustments */
+    .tool-container {
+        flex-direction: column; /* Stack input/output vertically for most tools */
+        gap: 20px;
+        padding: 30px 20px; /* Adjust padding */
+    }
+    .text-area-group, .input-group, .output-group {
+        width: 100%; /* Full width */
+    }
+    .action-buttons button {
+        width: 100%; /* Full width buttons */
+    }
+}
+
+/* Very Small Screens (e.g., mobile landscape) */
+@media (max-width: 480px) {
+    .section-container {
+        padding: 20px 15px;
+    }
+    .section-heading {
+        font-size: 1.8rem;
+    }
+    .controls button {
+        width: 100%; /* Full width buttons */
+        margin: 10px 0;
+    }
+    .pie-chart {
+        width: 140px; /* Even smaller charts */
+        height: 140px;
+    }
+    .pie-chart::after {
+        width: 90px;
+        height: 90px;
+    }
+    .chart-label {
+        font-size: 1.8rem;
+    }
+}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & Plagiarism Checker - Summarizer.ai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2QWDFWwBCxN5V6qG/t3bLtmG6NvwK20R8T3M2t/FfD3M2C5S5P5M5P5M5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Add or modify existing styles to fit the new layout */
+        .summarizer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .text-area-container {
+            position: relative;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px; /* Ensure containers have a minimum height */
+        }
+
+        textarea {
+            width: 100%;
+            flex-grow: 1; /* Allow textarea to take available space */
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            resize: vertical; /* Allow vertical resizing only */
+            min-height: 200px; /* Minimum height for the textarea */
+        }
+
+        .counter {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .controls button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .controls button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styles for results */
+        .results-output {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+            padding: 20px;
+            text-align: center;
+            /* background-color: #f9f9f9; /* Optional: light background for results area */
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .result-charts {
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-charts h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .pie-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(#e0e0e0 0%, #e0e0e0 100%); /* Default empty state */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chart-label {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            line-height: 1;
+        }
+
+        .chart-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .ai-detection-result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            width: 100%; /* Take full width of its parent container */
+            max-width: 400px; /* Constrain width for better readability */
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            min-height: 50px; /* Ensure visibility even if empty */
+            display: flex; /* For centering content vertically */
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Specific colors for charts */
+        #plagiarismPieChart {
+            /* Initial state, updated by JS */
+            background: conic-gradient(red 0%, red 0%, #e0e0e0 0%, #e0e0e0 100%);
+        }
+
+        #uniquePieChart {
+            /* Initial state, updated by JS */
+            background: conic-gradient(green 0%, green 0%, #e0e0e0 0%, #e0e0e0 100%);
+        }
+
+        /* Error message styling */
+        .error-message {
+            color: #dc3545;
+            font-weight: 500;
+            margin-top: 15px;
+            text-align: center;
+            display: none; /* Hidden by default, shown by JS */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .summarizer-grid {
+                grid-template-columns: 1fr; /* Stack columns on smaller screens */
+            }
+
+            .chart-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* --- FAQ Section Styles (Added for accordion functionality) --- */
+        .faq-container {
+            width: 100%;
+            max-width: 800px; /* Adjust as needed */
+            margin: 40px auto;
+        }
+
+        .faq-item {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden; /* Important for the max-height transition */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .faq-question {
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #f5f5f5;
+        }
+
+        .faq-question::after {
+            content: '+'; /* Plus symbol */
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #555;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question::after {
+            content: '−'; /* Minus symbol when active */
+            transform: rotate(0deg); /* No rotation needed for simple plus/minus */
+        }
+
+        .faq-answer {
+            max-height: 0; /* Initially hidden */
+            padding: 0 20px; /* No padding when hidden */
+            font-size: 1rem;
+            color: #555;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Smooth transition */
+            overflow: hidden; /* Hide overflowing content during transition */
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 15px 20px; /* Add padding when active */
+            /* max-height is set by JS */
+        }
+
+        .faq-answer p {
+            margin: 0; /* Remove default paragraph margin */
+            line-height: 1.6;
+        }
+        /* --- End FAQ Section Styles --- */
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo">Summarizer.ai</div>
+        <div class="nav-links">
+            <a href="/">Summarizer</a>
+            <a href="/article-rewriter">Article Rewriter</a>
+            <a href="/plagiarism-checker">Plagiarism Checker</a>
+            <a href="/paraphraser">Paraphrasing Tool</a>
+            <a href="/content_ideas">Content Idea Generator</a>
+            <a href="/text_to_speech">Text to Speech</a>
+            <a href="/ai_humanizer">AI Humanizer</a>
+            <a href="/ai_email_generator">AI Email Generator</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="section-container">
+        <h1 class="section-heading" style="font-size: 2.5rem;">AI & Plagiarism Checker</h1>
+        <main>
+            <div class="summarizer-grid">
+                <div class="text-area-container">
+                    <textarea id="inputText" placeholder="Paste your text here to check for plagiarism and AI content..."></textarea>
+                    <div class="counter" id="inputCounter">0 words</div>
+                </div>
+                <div class="text-area-container results-output">
+                    <div class="result-charts"> <h3>Overall Plagiarism Result</h3>
+                        <div class="chart-container">
+                            <div class="pie-chart" id="plagiarismPieChart">
+                                <span class="chart-label" id="plagiarismPercentage">0%</span>
+                                <span class="chart-text">Plagiarized Text</span>
+                            </div>
+                            <div class="pie-chart" id="uniquePieChart">
+                                <span class="chart-label" id="uniquePercentage">0%</span>
+                                <span class="chart-text">Unique Text</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-detection-result" id="aiDetectionResult">
+                        Estimated AI Content: 0%
+                    </div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="checkPlagiarismBtn">Analyze Text</button>
+            </div>
+        </main>
+    </section>
+
+    <section id="features" class="section-container">
+        <h2 class="section-heading">Why Choose Our Plagiarism & AI Checker?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Deep Scan Technology</h3>
+                <p>Our advanced algorithm scans billions of web pages and databases to find potential matches.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div> <h3>AI Content Detection</h3>
+                <p>Identify if your text was generated by AI, helping you maintain originality and authenticity.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Accurate & Reliable</h3>
+                <p>Get precise results and detailed reports, highlighting duplicated and AI-generated content effectively.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast & Easy To Use</h3>
+                <p>Simply paste your text and get your reports in seconds, with a user-friendly interface.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="section-container">
+        <h2 class="section-heading">Analyze Your Text in 3 Easy Steps</h2>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Paste Your Text</h4>
+                <p>Copy and paste your document or essay into the input box.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Click 'Analyze'</h4>
+                <p>Press the 'Analyze Text' button to start the scanning and detection process.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>View Report</h4>
+                <p>Instantly get a detailed report showing any duplicate content and estimated AI percentage.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="more-tools" class="section-container">
+        <h2 class="section-heading">Explore Our Other AI Tools</h2>
+        <div class="tools-grid">
+            <a href="/" class="tool-card">
+                <div class="tool-icon">✍️</div>
+                <h3>Text Summarizer</h3> <p>Summarize long texts into concise summaries.</p>
+            </a>
+            <a href="/article-rewriter" class="tool-card">
+                <div class="tool-icon">✍️</div>
+                <h3>Article Rewriter</h3>
+                <p>Rewrite articles to generate fresh, unique content.</p>
+            </a>
+            <a href="/plagiarism-checker" class="tool-card"> <div class="tool-icon">📚</div>
+                <h3>Plagiarism Checker</h3>
+                <p>Ensure your content is original and free from plagiarism.</p>
+            </a>
+            <a href="/paraphraser" class="tool-card">
+                <div class="tool-icon">📝</div>
+                <h3>Paraphrasing Tool</h3>
+                <p>Rephrase sentences and paragraphs without changing their meaning.</p>
+            </a>
+            <a href="#" class="tool-card">
+                <div class="tool-icon">💬</div>
+                <h3>Grammar Checker</h3>
+                <p>Correct grammar, spelling, and punctuation errors instantly.</p>
+            </a>
+            <a href="/content_ideas" class="tool-card">
+                <div class="tool-icon">💡</div>
+                <h3>Content Idea Generator</h3>
+                <p>Generate creative and engaging ideas for your next content piece.</p>
+            </a>
+            <a href="/text_to_speech" class="tool-card">
+                <div class="tool-icon">🌐</div>
+                <h3>Text to Speech</h3>
+                <p>Convert written text into natural-sounding speech.</p>
+            </a>
+            <a href="/ai_humanizer" class="tool-card">
+                <div class="tool-icon">👤</div>
+                <h3>AI Text to Humanize</h3>
+                <p>Transform AI-generated text into natural-sounding human writing.</p>
+            </a>
+            <a href="/ai_email_generator" class="tool-card">
+                <div class="tool-icon">📧</div>
+                <h3>AI Email Generator</h3>
+                <p>Generate professional emails quickly with AI assistance.</p>
+            </a>
+        </div>
+    </section>
+
+    <section id="faq" class="section-container">
+        <h2 class="section-heading">Frequently Asked Questions About Our Checkers</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">Is this checker free to use?</div>
+                <div class="faq-answer">
+                    <p>Yes, our Plagiarism and AI Checker tool is completely free for everyone. You can check as many documents as you need without any charges.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How accurate is the plagiarism and AI detection?</div>
+                <div class="faq-answer">
+                    <p>Our tool uses advanced algorithms to provide highly accurate plagiarism detection by comparing your text against a vast database of web pages and academic sources. The AI detection uses perplexity analysis, which serves as a helpful indicator. Always use it as a helpful guide for both.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What is the maximum length of text I can check?</div>
+                <div class="faq-answer">
+                    <p>Our tool is optimized for texts up to 5,000 words. For very long documents, breaking them into smaller sections might yield better results and faster processing.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How does the AI detection work?</div>
+                <div class="faq-answer">
+                    <p>Our AI detection estimates the likelihood of text being AI-generated by analyzing its perplexity. Generally, text generated by AI models tends to be more predictable (lower perplexity) than human-written text. The percentage provided is an estimate based on these linguistic patterns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-container section-container">
+            <div class="footer-column brand-info">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="Summarizer.AI Logo" class="logo-icon"> Summarizer.AI
+                </div>
+                <p>Summarize text online like professional writers with Top Notch AI-Summarizer.</p>
+                <div class="contact-info">
+                    <a href="mailto:support@summarizer.org">
+                        <i class="fa-solid fa-envelope"></i> support@summarizer.org
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/">Summarizing Tool</a></li>
+                    <li><a href="#">Blogs</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">API Plan</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Languages</h4>
+                <div class="language-selector">
+                    <select>
+                        <option value="en">🌐 English</option>
+                        <option value="ur">اردو Urdu</option>
+                    </select>
+                </div>
+                <h4 style="margin-top: 20px;">Address</h4>
+                <p>HR Tower, College Rd, Faisalabad</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="section-container footer-bottom-content">
+                <p>&copy; <span id="currentYearPlagiarismChecker"></span> Summarizer.ai - All Rights Reserved.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='plagiarism_checker_script.js') }}"></script>
+    <script>
+        document.getElementById('currentYearPlagiarismChecker').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

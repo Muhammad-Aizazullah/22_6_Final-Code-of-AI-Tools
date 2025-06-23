@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Email Generator - Summarizer.ai</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2QWDFWwBCxN5V6qG/t3bLtmG6NvwK20R8T3M2t/FfD3M5C5S5P5M5P5M5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Specific styles for AI Email Generator */
+        .tool-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 40px;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .input-group label, .output-group label {
+            font-weight: 600;
+            color: #1a237e;
+        }
+        .input-group input[type="text"],
+        .input-group textarea,
+        .output-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            transition: border-color 0.3s ease;
+        }
+        .input-group input[type="text"]:focus,
+        .input-group textarea:focus,
+        .output-group textarea:focus {
+            outline: none;
+            border-color: #6a1b9a;
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2);
+        }
+        .input-group textarea, .output-group textarea {
+            min-height: 120px; /* Adjusted for email inputs */
+            resize: vertical;
+        }
+        .output-group textarea {
+            min-height: 250px; /* Taller for the generated email */
+            background-color: #f9f9f9;
+            cursor: default;
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: #6a1b9a;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: fit-content; /* Adjust width based on content */
+        }
+        .action-buttons button:hover {
+            background-color: #4a148c;
+            transform: translateY(-2px);
+        }
+        .action-buttons button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6a1b9a;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #d32f2f;
+            background-color: #ffebee;
+            border: 1px solid #ef9a9a;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+            text-align: center;
+        }
+        /* Responsive adjustments for tool-container */
+        @media (max-width: 768px) {
+            .tool-container {
+                padding: 30px 20px; /* Adjust padding */
+                margin-top: 20px; /* Reduce top margin */
+            }
+            .input-group, .output-group {
+                width: 100%; /* Full width on small screens */
+            }
+            .action-buttons button {
+                width: 100%; /* Full width buttons */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo">Summarizer.ai</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#more-tools">More Tools</a>
+            <a href="/#faq">FAQ</a>
+        </div>
+        <div class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <section id="email-generator-tool" class="section-container">
+        <h1 class="section-heading">AI Email Generator</h1>
+        <div class="tool-container">
+            <div class="input-group">
+                <label for="recipientInput">Recipient (Optional):</label>
+                <input type="text" id="recipientInput" placeholder="e.g., 'Hiring Manager', 'Team', 'Client Name'">
+            </div>
+            <div class="input-group">
+                <label for="subjectInput">Subject:</label>
+                <input type="text" id="subjectInput" placeholder="e.g., 'Meeting Request', 'Follow-up on Project X', 'Job Application for Y'">
+            </div>
+            <div class="input-group">
+                <label for="purposeInput">Email Purpose / Keywords:</label>
+                <textarea id="purposeInput" placeholder="e.g., 'requesting a meeting for project discussion', 'following up on job application', 'informing about new feature release'"></textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button id="generateEmailBtn">Generate Email</button>
+                <div class="loader" id="loader"></div>
+            </div>
+
+            <div class="output-group">
+                <label for="emailOutput">Generated Email:</label>
+                <textarea id="emailOutput" readonly placeholder="Your generated email will appear here..."></textarea>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+    </section>
+
+    <section id="email-generator-features" class="section-container">
+        <h2 class="section-heading">Why Choose Our Email Generator?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⏱️</div>
+                <h3>Save Time</h3>
+                <p>Quickly draft professional emails, cutting down your writing time significantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Professional Tone</h3>
+                <p>Generate well-structured, polite, and effective emails suitable for any professional context.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>Never Stuck</h3>
+                <p>Overcome writer's block and get inspired with AI-powered email content.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="email-generator-how-it-works" class="section-container">
+        <h2 class="section-heading">How Our Email Generator Works</h2>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">
+                    <h4>Add Details</h4>
+                    <p>Provide the recipient (optional), subject, and purpose/keywords for your email.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">
+                    <h4>Generate</h4>
+                    <p>Click the 'Generate Email' button to let our AI craft the message.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">
+                    <h4>Review & Use</h4>
+                    <p>Review the generated email, make any edits, and send it!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="more-tools" class="section-container">
+        <h2 class="section-heading">Explore Our Other AI Tools</h2>
+        <div class="tools-grid">
+            <a href="/article-rewriter" class="tool-card"> 
+                <div class="tool-icon">✍️</div>
+                <h3>Article Rewriter</h3>
+                <p>Rewrite articles to generate fresh, unique content.</p>
+            </a>
+            <a href="/paraphraser" class="tool-card"> 
+                <div class="tool-icon">📝</div>
+                <h3>Paraphrasing Tool</h3>
+                <p>Rephrase sentences and paragraphs without changing their meaning.</p>
+            </a>
+            <a href="/plagiarism-checker" class="tool-card"> 
+                <div class="tool-icon">📚</div>
+                <h3>Plagiarism Checker</h3>
+                <p>Ensure your content is original and free from plagiarism.</p>
+            </a>
+            <a href="/ai_humanizer" class="tool-card"> 
+                <div class="tool-icon">🧑‍💻</div>
+                <h3>AI Text to Humanize</h3>
+                <p>Transform AI-generated text into natural, human-like content.</p>
+            </a>
+            <a href="/ai_email_generator" class="tool-card"> 
+                <div class="tool-icon">📧</div>
+                <h3>AI Email Generator</h3>
+                <p>Generate professional and engaging emails quickly with AI.</p>
+            </a>
+            <a href="/content_ideas" class="tool-card"> 
+                <div class="tool-icon">💡</div>
+                <h3>Content Idea Generator</h3>
+                <p>Generate creative and engaging ideas for your next content piece.</p>
+            </a>
+            <a href="/slogan_generator" class="tool-card"> 
+                <div class="tool-icon">🏷️</div> 
+                <h3>AI Slogan Generator</h3>
+                <p>Create catchy and memorable slogans for your brand or campaign.</p>
+            </a>
+            <a href="#" class="tool-card"> 
+                <div class="tool-icon">💬</div>
+                <h3>Grammar Checker</h3>
+                <p>Correct grammar, spelling, and punctuation errors instantly.</p>
+            </a>
+        </div>
+    </section>
+
+    <section id="faq" class="section-container">
+        <h2 class="section-heading">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What kind of emails can I generate?</h3>
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Our AI Email Generator can help you craft various types of emails, including professional inquiries, follow-ups, cover letters, thank-you notes, meeting requests, and more. Just provide the subject and purpose.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is the generated email ready to send?</h3>
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>The AI generates a high-quality draft, but we always recommend reviewing and personalizing it to perfectly match your specific needs and tone before sending.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Can it generate emails in different languages?</h3>
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Currently, the tool is optimized for English, but you can experiment with providing input in other languages, and the AI may attempt to generate a response in that language.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="footer-container section-container">
+            <div class="footer-column brand-info">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Summarizer.AI Logo" class="logo-icon"> Summarizer.AI
+                </div>
+                <p>Summarize text online like professional writers with Top Notch AI-Summarizer.</p>
+                <div class="contact-info">
+                    <a href="mailto:support@summarizer.org">
+                        <i class="fa-solid fa-envelope"></i> support@summarizer.org
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/">Summarizing Tool</a></li>
+                    <li><a href="#">Blogs</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">API Plan</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Languages</h4>
+                <div class="language-selector">
+                    <select>
+                        <option value="en">🌐 English</option>
+                        <option value="ur">اردو Urdu</option>
+                    </select>
+                </div>
+                <h4 style="margin-top: 20px;">Address</h4>
+                <p>HR Tower, College Rd, Faisalabad</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="section-container footer-bottom-content">
+                <p>&copy; <span id="currentYear"></span> Summarizer.ai - All Rights Reserved.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='ai_email_generator_script.js') }}"></script>
+    <script>
+        // Use a more generic ID for the year span to avoid conflicts
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

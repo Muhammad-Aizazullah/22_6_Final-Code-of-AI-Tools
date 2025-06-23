@@ -1,0 +1,9 @@
+nltk
+Flask
+Flask-Cors
+transformers
+torch
+scikit-learn
+numpy
+sentencepiece
+regex
